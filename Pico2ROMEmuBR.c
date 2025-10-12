@@ -12,8 +12,8 @@
 #include "rom_emu.pio.h"
 #include "rom_basic_const.c" 
 
-#define DATA_PINS_BASE 2    // GP2～GP9 (D0-D7 8bit)
-#define ADDR_PINS_BASE 10   // GP10～GP17 (MA0-MA7 8bit)
+#define DATA_PINS_BASE 10  // GP10～GP17 (D0-D7 8bit)
+#define ADDR_PINS_BASE 2   // GP2～GP9 (MA0-MA7 8bit)
 #define MRD_PIN 18
 #define MWR_PIN 19
 #define TPA_PIN 20
@@ -34,6 +34,8 @@
 
 //#define ROM_SIZE 8192
 #define ROM_SIZE 512
+#define RAM_START 0x1000
+#define RAM_SIZE 512
 
 // PIO初期化
 PIO pio = pio0;
@@ -42,18 +44,51 @@ uint sm = 0;
 
 uint8_t rom_data[ROM_SIZE] __attribute__((section(".data")));
 
+uint8_t ram_data[RAM_SIZE];
+
 // コア1のエントリポイント
 // core1_entry()はPIOの状態マシンを実行し、ROMデータを送信する  
 __attribute__((noinline)) void __time_critical_func(core1_entry)(void) {
     multicore_fifo_push_blocking(FLAG_VALUE);
     uint32_t g = multicore_fifo_pop_blocking();
     while (true) {
-        uint32_t address = pio_sm_get_blocking(pio, sm);    // アドレスを取得
-        uint32_t data = rom_data[address];                  // 13bitアドレスに対応
+        uint32_t address = pio_sm_get_blocking(pio, sm);    // 16bitアドレスを取得
+        uint32_t data = rom_data[address];
         pio_sm_put(pio, sm, data);                          // データを送信
     }
 }
 
+//        // FIFOにデータが溜まったらハンドラを呼ぶ
+//        if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
+//
+//            // FIFOレベルでRead/Writeを判断する
+//            uint32_t fifo_level = pio_sm_get_rx_fifo_level(pio, sm);
+//
+//            if (fifo_level == 2) {
+//                // --- 書き込み処理 (FIFOに2ワード) ---
+//                uint32_t address = pio_sm_get_blocking(pio, sm);    // 16bitアドレスを取得
+//                uint32_t data = pio_sm_get_blocking(pio, sm);  // dataを取得
+//
+//                if (address >= RAM_START && address < (RAM_START + RAM_SIZE)) {  // アドレスはRAM?
+//                    ram_data[address - RAM_START] = data;     // データをRAMに書き込み
+//                }
+//
+//            } else if (fifo_level == 1) {
+//                // --- 読み出し処理 (FIFOに1ワード) ---
+//                uint32_t address = pio_sm_get_blocking(pio, sm);    // 16bitアドレスを取得        
+//                uint32_t data;
+//
+//                if (address < ROM_SIZE) {
+//                    data = rom_data[address];
+//                } else if (address >= RAM_START && address < (RAM_START + RAM_SIZE)) {
+//                    data = ram_data[address - RAM_START];
+//                }
+//        
+//                pio_sm_put_blocking(pio, sm, data);
+//            }
+//        }
+//    }
+//}
 
 // rom_basic[]をrom_data[]にコピーする初期化ルーチン
 void init_rom_basic_code(void) {
@@ -87,8 +122,10 @@ __attribute__((noinline)) int __time_critical_func(main)(void) {
     gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 
     // Programmable I/O(PIO)初期化
-    uint offset = pio_add_program(pio, &oe_address_control_program);
-    pio_sm_config c = oe_address_control_program_get_default_config(offset);
+    //uint offset = pio_add_program(pio, &oe_address_control_program);  // 命令用のメモリーにアセンブラのプログラムを登録します
+    //pio_sm_config c = oe_address_control_program_get_default_config(offset); // デフォルト設定を得る
+    uint offset = pio_add_program(pio, &cdp1802_mem_emulator_program);  // 命令用のメモリーにアセンブラのプログラムを登録します
+    pio_sm_config c = cdp1802_mem_emulator_program_get_default_config(offset); // デフォルト設定を得る
 
     uint sm1 = 1; // sm1を使用
     uint offset1 = pio_add_program(pio, &clk_out_program);
@@ -98,11 +135,12 @@ __attribute__((noinline)) int __time_critical_func(main)(void) {
     uint offset2 = pio_add_program(pio, &reset_out_program);
     pio_sm_config c2 = reset_out_program_get_default_config(offset2);
 
-    // GP2-9：出力(8ピン BUS0-BUS7)
+    // GPIO初期化
+    // GP10-22: 出力(8ピン BUS0-BUS7)
     for (int i = 0; i < 8; i++) {
         pio_gpio_init(pio, DATA_PINS_BASE + i);
     }
-    // GP10-22：入力(8ピン MA0-MA7)
+    // GP2-9：入力(8ピン MA0-MA7)
     for (int i = 0; i < 8; i++) {
         pio_gpio_init(pio, ADDR_PINS_BASE + i);
     }
@@ -116,14 +154,14 @@ __attribute__((noinline)) int __time_critical_func(main)(void) {
 
     sm_config_set_in_pins(&c, ADDR_PINS_BASE);
     sm_config_set_out_pins(&c, DATA_PINS_BASE, 8);
-    sm_config_set_jmp_pin(&c, TPB_PIN); // GPIO21 TPBをJMPピンとして設定
+    sm_config_set_jmp_pin(&c, MRD_PIN); // GPIO21 TPBをJMPピンとして設定
 
-
+    // PIOが制御するピンの方向を設定
     pio_sm_set_consecutive_pindirs(pio, sm, DATA_PINS_BASE, 8, false); // 出力ピン初期化
 
     // シフトレジスタの設定
-    sm_config_set_in_shift(&c, false, false, 0); // ISR（入力シフトレジスタ）のシフト方向
-    sm_config_set_out_shift(&c, true, false, 0); // OSR（出力シフトレジスタ）のシフト方向
+    sm_config_set_in_shift(&c, false, false, 0); // ISR（入力シフトレジスタ）は左シフト方向
+    sm_config_set_out_shift(&c, true, false, 0); // OSR（出力シフトレジスタ）は右シフト方向
 
     // sm1 のクロックを設定 
     sm_config_set_set_pins(&c1, CLKOUT_PIN, 1); // GP28をクロック出力ピンとして設定
