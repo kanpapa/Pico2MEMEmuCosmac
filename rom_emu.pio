@@ -16,9 +16,10 @@
 .program oe_address_control
 .wrap_target
 loop1:
+    wait 1 gpio 20        ; 1: GP20(TPA)がHighになるまで待ちます
     wait 0 gpio 18        ; 1: MRDがLowまで待ちます
-;    jmp pin loop1         ; 2: TPBがHighならloop1 へ
-    wait 1 gpio 21        ; 2: TPBがHighになるまで待ちます
+    in pins, 8            ; 3: GP10-22(MA0-MA7) 8ビットのアドレスデータを読み込み、PIO内部のISR(Input Shift Register)に格納
+    wait 1 gpio 21        ; 2: GP21(TPB)がHighになるまで待ちます
     in pins, 8            ; 3: GP10-22(MA0-MA7) 8ビットのアドレスデータを読み込み、PIO内部のISR(Input Shift Register)に格納
     push                  ; 4: ISRに格納したアドレスデータをRX FIFO（受信FIFO）にプッシュします。
     pull                  ; 5: ここでプログラムは一時停止し、TX FIFO（送信FIFO）にデータが送られてくるのを待ちます。

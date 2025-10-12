@@ -33,7 +33,7 @@
 #define FLAG_VALUE 123
 
 //#define ROM_SIZE 8192
-#define ROM_SIZE 256
+#define ROM_SIZE 512
 
 // PIO初期化
 PIO pio = pio0;
