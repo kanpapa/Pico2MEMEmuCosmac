@@ -34,7 +34,7 @@ const unsigned char rom_basic[512] = {
 // 0109-3A 07            16 (   2)         BNZ     LOOP1               ; Dレジスタが0でなければLOOP1にジャンプ
 // 010B-94               17 (   2)         GHI     4                   ; DレジスタにR4の上位バイトを代入する
 // 010C-3A 07            18 (   2)         BNZ     LOOP1               ; Dレジスタが0でなければLOOP1にジャンプ
-// 010E-30 00 00         19 (   3)         LBR     $0000               ; 0番地へジャンプ
+// 010E-C0 00 00         19 (   3)         LBR     $0000               ; 0番地へジャンプ
 
   0xF8, 0x20, 0xB4, 0xCD, 0x7B, 0x38, 0x7A, 0x24, 0x84, 0x3A, 0x07, 0x94, 0x3A, 0x07, 0xC0, 0x00, // 0x0100
   0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0x0110
