@@ -1,4 +1,4 @@
-# Pico2ROMEmu を COSMACで動かしてみた
+# Pico2ROMEmu で COSMACを動かしてみた
 
 このブランチはPico2ROMEmuのコードを使用して、COSMACのROMエミュレータとして動かしてみた実験的なものです。
 
