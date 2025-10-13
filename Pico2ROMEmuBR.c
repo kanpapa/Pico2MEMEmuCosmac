@@ -14,8 +14,8 @@
 
 #define DATA_PINS_BASE 10  // GP10～GP17 (D0-D7 8bit)
 #define ADDR_PINS_BASE 2   // GP2～GP9 (MA0-MA7 8bit)
-#define MRD_PIN 18
-#define MWR_PIN 19
+#define MWR_PIN 18
+#define MRD_PIN 19
 #define TPA_PIN 20
 #define TPB_PIN 21
 #define RESETOUT_PIN 22     // GP22 (リセット出力)

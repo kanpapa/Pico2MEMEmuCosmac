@@ -36,8 +36,8 @@
 .define DATA_BUS_BASE 10
 .define DATA_BUS_WIDTH 8
 
-.define MRD_PIN 18
-.define MWR_PIN 19
+.define MWR_PIN 18
+.define MRD_PIN 19
 .define TPA_PIN 20
 .define TPB_PIN 21
 
@@ -45,23 +45,23 @@
 
 .wrap_target
 wait_tpa:
-    wait 1 gpio 20
-    wait 0 gpio 18
-    in pins, 8
-    wait 1 gpio 21
-    in pins, 8
-    push
+    wait 1 gpio 20  ; 1: TPAの立ち上がりを待つ
+    wait 0 gpio 20  ; 2: TPAのたち下がりを待つ-> 上位アドレスデータ確定
+    in pins, 8      ; 3: 上位8ビットをISRへ
+    wait 1 gpio 21  ; 4: TPBの立ち上がりを待つ
+    in pins, 8      ; 5: 下位8ビットをISRへ。上位8ビットもシフトするので16bitアドレスになる。
+    push            ; 6: アドレスデータをFIFOにプッシュする
 
 ;   jmp pin, handle_write   ; MRDがHIGHなら書き込み処理へ
 
 ; --- Read Cycle (MRD is LOW) ---
 ; アドレスのみ (1ワード) をFIFOに送信
 handle_read:
-    pull
-    mov pindirs, ~null    ; 6: メインCPUコアからデータを受け取ったので、今度はそのデータをデータバス（GP10〜GP17）に出力するため、GP10-17を出力モードにする
-    out pins, 8           ; 7: データ出力
-    wait 1 gpio 18   ; 8: MRDがHighまで待ちます
-    mov pindirs, null     ; 9: GP10-17を入力モードにする
+    pull                  ; 7: FIFOからデータを受け取る
+    mov pindirs, ~null    ; 8: メインCPUコアからデータを受け取ったので、今度はそのデータをデータバス（GP10〜GP17）に出力するため、GP10-17を出力モードにする
+    out pins, 8           ; 9: データをデータバスに出力
+    wait 1 gpio 19        ; 10: MRDがHighまで待ちます
+    mov pindirs, null     ; 11: GP10-17を入力モードにする
 ;    jmp handle_end
 
 ; --- Write Cycle (MRD is HIGH) ---
