@@ -1,4 +1,4 @@
-// COSMAC test Version alpha (ROM 256Byte, No RAM)
+// COSMAC test Version alpha (ROM only, No RAM)
 
 #include <stdio.h>
 #include <string.h>
@@ -44,8 +44,6 @@ uint sm = 0;
 
 uint8_t rom_data[ROM_SIZE] __attribute__((section(".data")));
 
-uint8_t ram_data[RAM_SIZE];
-
 // コア1のエントリポイント
 // core1_entry()はPIOの状態マシンを実行し、ROMデータを送信する  
 __attribute__((noinline)) void __time_critical_func(core1_entry)(void) {
@@ -57,38 +55,6 @@ __attribute__((noinline)) void __time_critical_func(core1_entry)(void) {
         pio_sm_put(pio, sm, data);                          // データを送信
     }
 }
-
-//        // FIFOにデータが溜まったらハンドラを呼ぶ
-//        if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
-//
-//            // FIFOレベルでRead/Writeを判断する
-//            uint32_t fifo_level = pio_sm_get_rx_fifo_level(pio, sm);
-//
-//            if (fifo_level == 2) {
-//                // --- 書き込み処理 (FIFOに2ワード) ---
-//                uint32_t address = pio_sm_get_blocking(pio, sm);    // 16bitアドレスを取得
-//                uint32_t data = pio_sm_get_blocking(pio, sm);  // dataを取得
-//
-//                if (address >= RAM_START && address < (RAM_START + RAM_SIZE)) {  // アドレスはRAM?
-//                    ram_data[address - RAM_START] = data;     // データをRAMに書き込み
-//                }
-//
-//            } else if (fifo_level == 1) {
-//                // --- 読み出し処理 (FIFOに1ワード) ---
-//                uint32_t address = pio_sm_get_blocking(pio, sm);    // 16bitアドレスを取得        
-//                uint32_t data;
-//
-//                if (address < ROM_SIZE) {
-//                    data = rom_data[address];
-//                } else if (address >= RAM_START && address < (RAM_START + RAM_SIZE)) {
-//                    data = ram_data[address - RAM_START];
-//                }
-//        
-//                pio_sm_put_blocking(pio, sm, data);
-//            }
-//        }
-//    }
-//}
 
 // rom_basic[]をrom_data[]にコピーする初期化ルーチン
 void init_rom_basic_code(void) {
@@ -154,7 +120,7 @@ __attribute__((noinline)) int __time_critical_func(main)(void) {
 
     sm_config_set_in_pins(&c, ADDR_PINS_BASE);
     sm_config_set_out_pins(&c, DATA_PINS_BASE, 8);
-    sm_config_set_jmp_pin(&c, MRD_PIN); // GPIO21 TPBをJMPピンとして設定
+    //sm_config_set_jmp_pin(&c, MRD_PIN); // GPIO21 TPBをJMPピンとして設定
 
     // PIOが制御するピンの方向を設定
     pio_sm_set_consecutive_pindirs(pio, sm, DATA_PINS_BASE, 8, false); // 出力ピン初期化
