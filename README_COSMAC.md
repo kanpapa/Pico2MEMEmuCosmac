@@ -1,6 +1,6 @@
 # Pico2ROMEmu を COSMACで動かしてみた
 
-このプロジェクトは Raspberry Pi Pico2を使用して、COSMACのROMエミュレータとして動かした実験的なものです。
+このプロジェクトはPico2ROMEmuのコードを使用して、COSMACのROMエミュレータとして動かしてみた実験的なものです。
 
 詳細はソースをご確認ください。
 
