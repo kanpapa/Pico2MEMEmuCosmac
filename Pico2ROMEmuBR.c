@@ -120,7 +120,7 @@ __attribute__((noinline)) int __time_critical_func(main)(void) {
 
     sm_config_set_in_pins(&c, ADDR_PINS_BASE);
     sm_config_set_out_pins(&c, DATA_PINS_BASE, 8);
-    //sm_config_set_jmp_pin(&c, MRD_PIN); // GPIO21 TPBをJMPピンとして設定
+    sm_config_set_jmp_pin(&c, MRD_PIN); // MRDをJMPピンとして設定
 
     // PIOが制御するピンの方向を設定
     pio_sm_set_consecutive_pindirs(pio, sm, DATA_PINS_BASE, 8, false); // 出力ピン初期化

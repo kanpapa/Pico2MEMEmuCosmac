@@ -26,17 +26,19 @@
 .define TPB_PIN 21
 
 .wrap_target
+loop1:
     wait 1 gpio TPA_PIN          ; 1: TPAの立ち上がりを待つ
     wait 0 gpio TPA_PIN          ; 2: TPAのたち下がりを待つ-> 上位アドレスデータ確定
-    in pins, ADDR_BUS_WIDTH      ; 3: 上位アドレスデータ8ビットをISRへ
-    wait 1 gpio TPB_PIN          ; 4: TPBの立ち上がりを待つ
-    in pins, ADDR_BUS_WIDTH      ; 5: 下位アドレスデータ8ビットをISRへ。上位8ビットがシフトするので16bitアドレスになる。
-    push                         ; 6: アドレスデータをFIFOにプッシュする（push命令はISRからRX FIFOに32ビットデータを書き込む）
-    pull                         ; 7: FIFOからデータを受け取る
-    mov pindirs, ~null           ; 8: メインCPUコアからデータを受け取ったので、今度はそのデータをデータバス（GP10〜GP17）に出力するため、GP10-17を出力モードにする
-    out pins, DATA_BUS_WIDTH     ; 9: データをデータバスに出力
-    wait 1 gpio MRD_PIN          ; 10: MRDがHighまで待ちます
-    mov pindirs, null            ; 11: GP10-17を入力モードにする
+    jmp pin loop1                ; 3: MRDがHIGHの場合はリードサイクルでは無いのでループに戻る
+    in pins, ADDR_BUS_WIDTH      ; 4: 上位アドレスデータ8ビットをISRへ
+    wait 1 gpio TPB_PIN          ; 5: TPBの立ち上がりを待つ
+    in pins, ADDR_BUS_WIDTH      ; 6: 下位アドレスデータ8ビットをISRへ。上位8ビットがシフトするので16bitアドレスになる。
+    push                         ; 7: アドレスデータをFIFOにプッシュする（push命令はISRからRX FIFOに32ビットデータを書き込む）
+    pull                         ; 8: FIFOからデータを受け取る
+    mov pindirs, ~null           ; 9: メインCPUコアからデータを受け取ったので、今度はそのデータをデータバス（GP10〜GP17）に出力するため、GP10-17を出力モードにする
+    out pins, DATA_BUS_WIDTH     ; 10: データをデータバスに出力
+    wait 1 gpio MRD_PIN          ; 11: MRDがHighまで待ちます
+    mov pindirs, null            ; 12: GP10-17を入力モードにする
 .wrap
 
 .program clk_out            ; クロック 1/2の周波数を出力 (GP28)
