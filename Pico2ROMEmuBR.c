@@ -33,9 +33,11 @@
 //#define ROM_SIZE 512
 //#define RAM_START 0x1000
 //#define RAM_SIZE 512
-#define ROM_SIZE 0x0400 // ROM size 1k bytes
-#define RAM_SIZE 0x1000 // RAM size 4k bytes
+//#define ROM_SIZE 0x0400 // ROM size 1k bytes
+//#define RAM_SIZE 0x1000 // RAM size 4k bytes
 #define RAM_START 0x8000 // RAM start address
+#define ROM_SIZE 0x4000 // ROM size 16k bytes
+#define RAM_SIZE 0x8000 // RAM size 32k bytes
 
 // PIO初期化
 PIO pio = pio0;
@@ -185,10 +187,8 @@ __attribute__((noinline)) int __time_critical_func(main)(void) {
     // sm_clock のクロックを設定 
     sm_config_set_set_pins(&c_clock, CLKOUT_PIN, 1); // GP28をクロック出力ピンとして設定
     pio_sm_set_consecutive_pindirs(pio, sm_clock, CLKOUT_PIN, 1, true); // CLKOUTピンの初期化
-    //sm_config_set_clkdiv(&c_clock, (float)sysclk / 4000.0f); //  4MHz : 2MHz
-    //sm_config_set_clkdiv(&c_clock, (float)sysclk / 1000.0f); //  1MHz : 0.5MHz
     sm_config_set_clkdiv(&c_clock, (float)sysclk / 3580.0f); //  3.58MHz : 1.79MHz
-
+    
     // sm_reset のリセット出力を設定
     sm_config_set_set_pins(&c_reset, RESETOUT_PIN, 1); // GP25をリセット出力ピンとして設定
     pio_sm_set_consecutive_pindirs(pio, sm_reset, RESETOUT_PIN, 1, true); // リセット出力ピンの初期化 
@@ -224,7 +224,7 @@ __attribute__((noinline)) int __time_critical_func(main)(void) {
     }
     printf("\nPico2 システムクロック(1.3V) - %dMHz\n", sysclk / 1000);
     printf("リセット出力状態 - ON\n");
-    printf("クロック出力(2MHz) - ON\n");
+    printf("クロック出力(1.79MHz) - ON\n");
     printf("ROM/RAMエミュレータ起動 - core1\n");
     multicore_launch_core1(core1_entry);
     uint32_t g = multicore_fifo_pop_blocking();
