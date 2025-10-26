@@ -1,16 +1,86 @@
 ; rom_emu.pio 
-.program oe_address_control
+;.program oe_address_control
+;.wrap_target
+;loop1:
+;    wait 0 gpio 27        ; 1: CS有効待ち
+;    jmp pin loop1         ; 2: OE無効なら loop1 へ
+;    in pins, 13           ; 3: GP10-22(A0-A12) 13ピン読込
+;    push                  ; 4: アドレスをプッシュ
+;    pull                  ; 5: データをプル
+;    mov pindirs, ~null    ; 6: GP0-7を出力モード
+;    out pins, 8           ; 7: データ出力
+;    wait 1 gpio 26        ; 8: OE無効待ち
+;    mov pindirs, null     ; 9: GP0-7を入力モード
+;.wrap
+
+;.program cdp1802_mem_emulator
+;
+;.define ADDR_BUS_BASE 2
+;.define ADDR_BUS_WIDTH 8
+;.define DATA_BUS_BASE 10
+;.define DATA_BUS_WIDTH 8
+;
+;.define MWR_PIN 18
+;.define MRD_PIN 19
+;.define TPA_PIN 20
+;.define TPB_PIN 21
+
+;.wrap_target
+;loop1:
+;    wait 1 gpio TPA_PIN          ; 1: TPAの立ち上がりを待つ
+;    wait 0 gpio TPA_PIN          ; 2: TPAのたち下がりを待つ-> 上位アドレスデータ確定
+;    jmp pin loop1                ; 3: MRDがHIGHの場合はリードサイクルでは無いのでループに戻る
+;    in pins, ADDR_BUS_WIDTH      ; 4: 上位アドレスデータ8ビットをISRへ
+;    wait 1 gpio TPB_PIN          ; 5: TPBの立ち上がりを待つ
+;    in pins, ADDR_BUS_WIDTH      ; 6: 下位アドレスデータ8ビットをISRへ。上位8ビットがシフトするので16bitアドレスになる。
+;    push                         ; 7: アドレスデータをFIFOにプッシュする（push命令はISRからRX FIFOに32ビットデータを書き込む）
+;    pull                         ; 8: FIFOからデータを受け取る
+;    mov pindirs, ~null           ; 9: メインCPUコアからデータを受け取ったので、今度はそのデータをデータバス（GP10〜GP17）に出力するため、GP10-17を出力モードにする
+;    out pins, DATA_BUS_WIDTH     ; 10: データをデータバスに出力
+;    wait 1 gpio MRD_PIN          ; 11: MRDがHighまで待ちます
+;    mov pindirs, null            ; 12: GP10-17を入力モードにする
+;.wrap
+
+; アドレス取得＆メモリ読み出しのステートマシン
+.program cdp1802_get_address
+
+.define ADDR_BUS_WIDTH 8
+.define TPA_PIN 20
+.define TPB_PIN 21
+.define DATA_BUS_WIDTH 8
+.define MRD_PIN 19
+.define MWR_PIN 18
+
 .wrap_target
 loop1:
-    wait 0 gpio 27        ; 1: CS有効待ち
-    jmp pin loop1         ; 2: OE無効なら loop1 へ
-    in pins, 13           ; 3: GP10-22(A0-A12) 13ピン読込
-    push                  ; 4: アドレスをプッシュ
-    pull                  ; 5: データをプル
-    mov pindirs, ~null    ; 6: GP0-7を出力モード
-    out pins, 8           ; 7: データ出力
-    wait 1 gpio 26        ; 8: OE無効待ち
-    mov pindirs, null     ; 9: GP0-7を入力モード
+    wait 1 gpio TPA_PIN        ; 1: TPAの立ち上がりを待つ
+    wait 0 gpio TPA_PIN        ; 2: TPAの立ち下がりを待つ
+    in pins, ADDR_BUS_WIDTH    ; 3: 上位アドレスをISRへ
+
+    wait 1 gpio TPB_PIN        ; 4: TPBの立ち上がりを待つ
+    ;wait 0 gpio TPB_PIN        ; 5: TPBの立ち下がりを待つ
+    in pins, ADDR_BUS_WIDTH    ; 6: 下位アドレスをISRへ合成し、16bitアドレスにする
+    push                       ; 7: 16bitアドレスをRX FIFOにプッシュ
+
+    pull                       ; 8: CPUからのデータをTX FIFOからOSRへ待つ
+    jmp pin loop1              ; 9: READじゃなければWRITE smにまかせる
+    mov pindirs, ~null         ; 10: READで、メインCPUコアからデータを受け取ったので、今度はそのデータをデータバス（GP10〜GP17）に出力するため、GP10-17を出力モードにする
+    out pins, DATA_BUS_WIDTH   ; 11: データをデータバスに出力
+    wait 1 gpio MRD_PIN        ; 12: MRDがHighまで待ちます
+    mov pindirs, null          ; 13: GP10-17を入力モードにする
+.wrap
+
+; メモリ書き込みステートマシン
+.program cdp1802_write_mem
+
+.define DATA_BUS_WIDTH 8
+.define MWR_PIN 18
+
+mem_write:
+    wait 0 gpio MWR_PIN         ; 1: MWRがアクティブ(LOW)になるのを待つ
+    in pins, DATA_BUS_WIDTH     ; 2: データバスから8bitのデータをISRに読み込む
+    wait 1 gpio MWR_PIN         ; 4: MWRが非アクティブ(HIGH)になるのを待つ
+    push                        ; 3: ISRのデータをRX FIFOにプッシュ
 .wrap
 
 .program clk_out            ; クロック 1/2の周波数を出力 (GP28)
@@ -19,14 +89,14 @@ loop1:
     set pins, 0   ; Turn off
 .wrap
 
-.program reset_out          ; リセット 指定時間(ms)High出力 (GP25)
+.program reset_out          ; リセット 指定時間(ms)Low出力 (GP22)
     set pins, 1
 .wrap_target
     pull
     mov x,osr
-    set pins, 1             ; Reset ON (Turn High)
+    set pins, 0             ; Reset ON (Turn Low)
 loop:
     nop [1]
     jmp x-- loop [7]
-    set pins, 0             ; Reset OFF (Turn Low)
+    set pins, 1             ; Reset OFF (Turn High)
 .wrap
