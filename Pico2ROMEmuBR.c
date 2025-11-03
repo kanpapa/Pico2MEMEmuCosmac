@@ -29,15 +29,20 @@
 
 #define FLAG_VALUE 123
 
-//#define ROM_SIZE 8192
-//#define ROM_SIZE 512
-//#define RAM_START 0x1000
-//#define RAM_SIZE 512
-//#define ROM_SIZE 0x0400 // ROM size 1k bytes
-//#define RAM_SIZE 0x1000 // RAM size 4k bytes
-#define RAM_START 0x8000 // RAM start address
-#define ROM_SIZE 0x4000 // ROM size 16k bytes
-#define RAM_SIZE 0x8000 // RAM size 32k bytes
+// ROM512byte, RAM512byte (Blink test)
+#define RAM_START 0x1000
+#define RAM_SIZE 512 // RAM size 0.5k bytes
+#define ROM_SIZE 512 // ROM size 0.5k bytes
+
+// ROM16K, RAM32K (MCBASIC3.bin)
+//#define RAM_START 0x8000 // RAM start address
+//#define ROM_SIZE 0x4000 // ROM size 16k bytes
+//#define RAM_SIZE 0x8000 // RAM size 32k bytes
+
+// ROM32K, RAM32K (MCSMP20A.bin)
+//#define RAM_START 0x8000 // RAM start address
+//#define ROM_SIZE 0x8000 // ROM size 32k bytes
+//#define RAM_SIZE 0x8000 // RAM size 32k bytes
 
 // PIO初期化
 PIO pio = pio0;
