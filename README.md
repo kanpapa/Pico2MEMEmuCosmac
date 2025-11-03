@@ -41,6 +41,9 @@
 
 ※9～12はオプションです。
 
+## マニュアル
+- [RCA BASIC3の組み込みかた](./docs/MCBASIC3.md)
+
 ## ライセンス
 本プロジェクトのソースコードは[Pico2ROMEmuBR](https://github.com/kyo-ta04/Pico2ROMEmuBR)のライセンスに従います。
 
