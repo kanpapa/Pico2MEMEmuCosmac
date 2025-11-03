@@ -9,35 +9,34 @@
 //
 // START PROGRAM
 //
-// 0000-C0 01 00          8 (   3) 　　　   LBR     $0100              ; $0100にジャンプ
+// 0000-C0 01 00          　　    LBR     $0100              ; $0100にジャンプ($0100にアクセスできるかのテスト)
 //
 // BLINK TEST
 //
-// 0100-F8 40             8 (   2) START:  LDI     #$40                ; Dレジスタに$40を入れる（点滅間隔のウェイトループ値）
-// 0102-B4                9 (   2)         PHI     4                   ; R4の上位バイトにDレジスタの値を代入する
-// 0103-CD               10 (   3)         LSQ                         ; Qが1だったら2バイトスキップする
-// 0104-7B               11 (   2)         SEQ                         ; Qを1にする
-// 0105-38               12 (   2)         SKP                         ; 次の命令を無条件でスキップする
-// 0106-7A               13 (   2)         REQ                         ; Qを0にする
-// 0107-24               14 (   2) LOOP1:  DEC     4                   ; R4を1減算する
-// 0108-84               15 (   2)         GLO     4                   ; DレジスタにR4の下位バイトを代入する
-// 0109-3A 07            16 (   2)         BNZ     LOOP1               ; Dレジスタが0でなければLOOP1にジャンプ
-// 010B-94               17 (   2)         GHI     4                   ; DレジスタにR4の上位バイトを代入する
-// 010C-3A 07            18 (   2)         BNZ     LOOP1               ; Dレジスタが0でなければLOOP1にジャンプ
+// 0100-F8 40            START:  LDI     #$40                ; Dレジスタに$40を入れる（点滅間隔のウェイトループ値）
+// 0102-B4                       PHI     4                   ; R4の上位バイトにDレジスタの値を代入する
+// 0103-CD                       LSQ                         ; Qが1だったら2バイトスキップする
+// 0104-7B                       SEQ                         ; Qを1にする
+// 0105-38                       SKP                         ; 次の命令を無条件でスキップする
+// 0106-7A                       REQ                         ; Qを0にする
+// 0107-24               LOOP1:  DEC     4                   ; R4を1減算する
+// 0108-84                       GLO     4                   ; DレジスタにR4の下位バイトを代入する
+// 0109-3A 07                    BNZ     LOOP1               ; Dレジスタが0でなければLOOP1にジャンプ
+// 010B-94                       GHI     4                   ; DレジスタにR4の上位バイトを代入する
+// 010C-3A 07                    BNZ     LOOP1               ; Dレジスタが0でなければLOOP1にジャンプ
 //
 // MEMORY TEST
 //
-// 010E-F8 10            13 (   2)         LDI     #$10    ; $1000 -> R1
-// 0110-B1               14 (   2)         PHI     1
-// 0111-F8 00            15 (   2)         LDI     #$00
-// 0113-A1               16 (   2)         PLO     1
-// 0114-F8 55            17 (   2)         LDI     #$55    ; $55 -> D
-// 0116-51               18 (   2)         STR     1       ; D -> M(R(1))
-// 0117-01               19 (   2)         LDN     1       ; M(R(1)) -> D
-// 0118-C0 00 00         19 (   3)         LBR     $0000               ; 0番地へジャンプ
+// 010E-F8 10                    LDI     #$10                ; $1000 -> R1
+// 0110-B1                       PHI     1
+// 0111-F8 00                    LDI     #$00
+// 0113-A1                       PLO     1
+// 0114-F8 55                    LDI     #$55                ; $55 -> D
+// 0116-51                       STR     1                   ; D -> M(R(1))
+// 0117-01                       LDN     1                   ; M(R(1)) -> D
+// 0118-C0 00 00                 LBR     $0000               ; 0番地へジャンプ
 
 const unsigned char rom_basic[0x0200] = {
-
   0xC0, 0x01, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0x0000
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0x0010
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0x0020
@@ -70,5 +69,4 @@ const unsigned char rom_basic[0x0200] = {
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0x01D0
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0x01E0
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0x01F0
-
 };
