@@ -15,6 +15,7 @@
 ![ブレッドボード版回路図](./IMG/Pico2MEMEmuCOSMAC_proto01.jpg)
 - 専用基板Rev.0.1 回路図
 ![専用基板回路図](./IMG/Pico2MEMEmuCosmac_sch_rev01.jpg)
+[PDF](./IMG/Pico2MEMEmuCosmac_sch_rev01.pdf)
 
 ## PCB
 - [KiCADデータ](./kicad)
