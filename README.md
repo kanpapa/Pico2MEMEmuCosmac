@@ -48,7 +48,7 @@
 
 ## 資料
 - ブレッドボードで実験中の様子
-![ブレッドボードで実験中の様子](./IMG/Pico2MEMEmuCOSMAC_blink01.jpg)
+![ブレッドボードで実験中の様子](./IMG/Pico2MEMEmuCosmac_blink01.jpg)
 - 専用基板に実装した状態
 ![専用基板に実装した状態](./IMG/Pico2MEMEmuCosmac.jpg)
 - 専用基板で動作中の様子
