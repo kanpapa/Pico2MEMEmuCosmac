@@ -4,7 +4,7 @@
 
 ## 概要
 - COSMAC CPUの動作クロックは1.79MHzです。
-- ROM/RAMは各32KBを割り当てていますが、全アドレス空間内であれば設定はずです。（ただし、未確認）
+- ROM/RAMは各32KBを割り当てて確認しましたが、64KBのアドレス空間内であればカスタマイズ可能です。
 - ROMにはテストプログラムとしてQ出力のLチカを組み込んでいます。rom_basic_const.cのコメントを参照してください。
 - 専用基板Rev.0.1にはSBC1802にあるインジケーターをオプション回路として追加しています。
 
@@ -42,8 +42,17 @@
 ※9～12はオプションです。
 
 ## マニュアル
+- [Lチカの楽しみかた](./docs/blink.md)
 - [RCA BASIC3の楽しみかた](./docs/MCBASIC3.md)
 - [MCSMP Super Monitor+BASIC3の楽しみかた](./docs/MCSMP20A.md)
+
+## 資料
+- ブレッドボードで実験中の様子
+![ブレッドボードで実験中の様子](./IMG/Pico2MEMEmuCosmac_blink01.jpg)
+- 専用基板に実装した状態
+![専用基板に実装した状態](./IMG/Pico2MEMEmuCosmac.jpg)
+- 専用基板で動作中の様子
+![専用基板で動作中の様子](./IMG/Pico2MEMEmuCosmac_running_basic01.jpg)
 
 ## ライセンス
 本プロジェクトのソースコードは[Pico2ROMEmuBR](https://github.com/kyo-ta04/Pico2ROMEmuBR)のライセンスに従います。
