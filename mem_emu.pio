@@ -1,5 +1,6 @@
 ; mem_emu.pio 
-; COSMAC用アドレス取得＆メモリ読み出しのステートマシン
+; COSMAC用アドレス取得＆メモリ読み書きのステートマシン
+;
 ; Based on kyo-ta04(DragonballEZ) rom_emu.pio
 ; https://github.com/kyo-ta04/Pico2ROMEmuBR
 
