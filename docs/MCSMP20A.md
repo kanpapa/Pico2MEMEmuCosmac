@@ -43,7 +43,7 @@
     #define RAM_SIZE 0x8000 // RAM size 32k bytes  
     ```
 
-1. Pico2のファームウェアをビルドする。
+1. Pico2のファームウェアを[ビルド](/docs/raspberry-pi-pico-vscode-build.md)してください。
 1. Pico2MEMEmuCosmacのPico2にUSBケーブルでPCを接続し、生成されたファームウェアを書き込みます。
 1. PCでターミナルを立ち上げてPico2に接続します。通信速度は9600bps, Data:8bit, Stop:1bit, Parity:Nonです。遅延時間は1文字毎に20ms, 改行毎に500msぐらいが必要です。
 1. Enterキーを一度押すと、エミュレーターが動きはじめます。
