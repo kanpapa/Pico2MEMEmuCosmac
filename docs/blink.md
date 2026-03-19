@@ -23,8 +23,14 @@
 Q出力に抵抗とLEDを接続します。またはオプションのインジケーター回路を実装していればTXDのLEDを点滅することができます。
 
 ## ファームウェアの書き込み
-1. Pico2のファームウェアをビルドする。
-1. Pico2MEMEmuCosmacのPico2にUSBケーブルでPCを接続し、生成されたファームウェアを書き込みます。
+1. Pico2開発環境の準備  
+Raspberry Pi Pico2のファームウェアのビルド環境はWindowsだとVisual Studio Codeの拡張機能を使用するのがおすすめです。  
+Visual Studio Codeをインストールして、拡張機能でRaspberry Pi Picoをインストールしてください。
+1. Pico2のファームウェアのビルド  
+GitHubからcloneしたフォルダをVisual Studio Codeで開いて、アクティビティバーにあるPicoのアイコンから、Compile Projectをクリックすればファームウェアが生成されます。  
+Windowsの場合はコンパイルに必要なツールは自動的にユーザディレクトリの.pico-sdkにインストールされます。少し大きいので時間がかかるかもしれません。
+1. ファームウェアをpico2にインストール  
+Pico2をUSBケーブルでPCに接続するとPico2のフォルダにアクセスできます。生成されたファームウェアPico2ROMEmuBR.uf2をこのフォルダにドラッグ＆ドロップすることでPico2に書き込めば新しいファームウェアで動き始めます。
 
 ## 点滅間隔を変えてみる
 ```
