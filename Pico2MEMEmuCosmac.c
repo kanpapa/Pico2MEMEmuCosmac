@@ -1,4 +1,9 @@
-// COSMAC test Version alpha (ROM only, No RAM)
+// Pico2MEMEmuCosmac.C
+// COSMAC test Version
+//
+// Based on kyo-ta04(DragonballEZ) Pico2ROMEmuBR.c
+// https://github.com/kyo-ta04/Pico2ROMEmuBR
+//
 
 #include <stdio.h>
 #include <string.h>
@@ -9,8 +14,8 @@
 #include "hardware/uart.h"
 #include "hardware/pll.h"
 #include "pico/multicore.h"
-#include "rom_emu.pio.h"
-#include "rom_basic_const.c" 
+#include "mem_emu.pio.h"
+#include "rom_const.c" 
 
 #define DATA_PINS_BASE 10  // GP10～GP17 (D0-D7 8bit)
 #define ADDR_PINS_BASE 2   // GP2～GP9 (MA0-MA7 8bit)
