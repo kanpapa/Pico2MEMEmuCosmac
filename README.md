@@ -1,27 +1,27 @@
 # Pico2MEMEmuCOSMAC
 
-このリポジトリはkyo-ta04(DragonballEZ)さんの[Pico2ROMEmuBR](https://github.com/kyo-ta04/Pico2ROMEmuBR)のコードを応用して、COSMAC（CDP1802）のROM/RAMエミュレータとして動かしてみた実験的なものです。
+このリポジトリはkyo-ta04(DragonballEZ)さんの[Pico2ROMEmuBR](https://github.com/kyo-ta04/Pico2ROMEmuBR)のコードを応用して、COSMAC（CDP1802）のROM/RAMエミュレータとして動かしてみた実験的なプロジェクトです。
 
 ## 概要
 - COSMAC CPUの動作クロックは1.79MHzです。
 - ROM/RAMは各32KBを割り当てて確認しましたが、64KBのアドレス空間内であればカスタマイズ可能です。
-- ROMにはテストプログラムとしてQ出力のLチカを組み込んでいます。rom_basic_const.cのコメントを参照してください。
+- ROMにはテストプログラムとしてQ出力のLチカを組み込んでいます。rom_const.cのコメントを参照してください。
 - 専用基板Rev.0.1にはSBC1802にあるインジケーターをオプション回路として追加しています。
 
 詳細はソースをご確認ください。
 
 ## 回路図
 - ブレッドボード版回路図
-![ブレッドボード版回路図](./IMG/Pico2MEMEmuCOSMAC_proto01.jpg)
+![ブレッドボード版回路図](IMG/Pico2MEMEmuCOSMAC_proto01.jpg)
 - 専用基板Rev.0.1 回路図
-![専用基板回路図](./IMG/Pico2MEMEmuCosmac_sch_rev01.jpg)
-[PDF](./IMG/Pico2MEMEmuCosmac_sch_rev01.pdf)
+![専用基板回路図](IMG/Pico2MEMEmuCosmac_sch_rev01.jpg)
+[PDF](IMG/Pico2MEMEmuCosmac_sch_rev01.pdf)
 
 ## PCB
-- [KiCADデータ](./kicad)
-- [Gerberデータ](./kicad/gerber/)
+- [KiCADデータ](kicad)
+- [Gerberデータ](kicad/gerber/)
 - PCB 3Dイメージ
-![専用基板Rev.0.1 3Dイメージ](./kicad/Pico2MEMEmuCosmac_PCB_3D.jpg)
+![専用基板Rev.0.1 3Dイメージ](kicad/Pico2MEMEmuCosmac_PCB_3D.jpg)
 
 ## BOM
 |Item|Qty|Reference(s)|Value|Description|Datasheet|
@@ -42,17 +42,17 @@
 ※9～12はオプションです。
 
 ## マニュアル
-- [Lチカの楽しみかた](./docs/blink.md)
-- [RCA BASIC3の楽しみかた](./docs/MCBASIC3.md)
-- [MCSMP Super Monitor+BASIC3の楽しみかた](./docs/MCSMP20A.md)
+- [Lチカの楽しみかた](docs/blink.md)
+- [RCA BASIC3の楽しみかた](docs/MCBASIC3.md)
+- [MCSMP Super Monitor+BASIC3の楽しみかた](docs/MCSMP20A.md)
 
 ## 資料
 - ブレッドボードで実験中の様子
-![ブレッドボードで実験中の様子](./IMG/Pico2MEMEmuCosmac_blink01.jpg)
+![ブレッドボードで実験中の様子](IMG/Pico2MEMEmuCosmac_blink01.jpg)
 - 専用基板に実装した状態
-![専用基板に実装した状態](./IMG/Pico2MEMEmuCosmac.jpg)
+![専用基板に実装した状態](IMG/Pico2MEMEmuCosmac.jpg)
 - 専用基板で動作中の様子
-![専用基板で動作中の様子](./IMG/Pico2MEMEmuCosmac_running_basic01.jpg)
+![専用基板で動作中の様子](IMG/Pico2MEMEmuCosmac_running_basic01.jpg)
 
 ## ライセンス
 本プロジェクトのソースコードは[Pico2ROMEmuBR](https://github.com/kyo-ta04/Pico2ROMEmuBR)のライセンスに従います。

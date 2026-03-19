@@ -3,12 +3,12 @@
 
 ## 作業環境
 - Ubuntu 24.04
-- 他の環境でも同様にできると思います。
+- Pythonが動作すれば他の環境でも同様にできると思います。
 
 ## 作業手順
 1. [1802メンバーシップカードのホームページ](https://sunrise-ev.com/1802.htm)からMCSMP Super Monitor Program plus BASIC3のバイナリをダウンロードする。
 
-    SoftwareのMonitor programsにMCSMP Super Monitor Program plus BASIC3がありますので、MCSMP20A.binをダウンロードします。このバイナリは開始アドレスが0x0000になっていて、32KbyteのROMに書き込めるイメージになっています。
+    SoftwareのMonitor programsにMCSMP Super Monitor Program plus BASIC3がありますので、`MCSMP20A.bin`をダウンロードします。このバイナリは開始アドレスが0x0000になっていて、32KbyteのROMに書き込めるイメージになっています。
 
 1. MCSMP20Aのバイナリをリポジトリのディレクトリにコピーする。
 
@@ -16,25 +16,25 @@
     cp MCSMP20A.bin ~/Pico2MEMEmuCosmac/.
     ```
 
-1. 現在のソースコードを退避する。
+1. 現在のROMデータのソースコードを退避する。
 
     ```
-    mv rom_basic_const.c rom_basic_const.c.org
+    mv rom_const.c rom_const.c.org
     ```
 
 1. バイナリデータをソースコードに変換するpython3プログラムを実行する。
 
     ```
-    python3 mcsmp20a_to_src.py MCSMP20A.bin > rom_basic_const.c
+    python3 convert_tools/mcsmp20a_to_src.py MCSMP20A.bin > rom_const.c
     ```
 
 1. 作成されたソースコードを確認する。MCSMP20A.binが配列として組み込まれていればOKです。
 
     ```
-    cat rom_basic_const.c
+    cat rom_const.c
     ```
 
-1. Pico2ROMEmuBR.cのメモリ設定を以下のように変更する。ROMを32KByteを変更し, RAMの開始が0x8000で32KByteになっていれば問題ありません。
+1. `Pico2MEMEmuCosmac.c`のメモリ設定を以下のように変更する。ROMを32KByteを変更し, RAMの開始が0x8000で32KByteになっていれば問題ありません。
 
     ```
     #define RAM_START 0x8000 // RAM start address  
@@ -48,7 +48,7 @@
 1. PCでターミナルを立ち上げてPico2に接続します。通信速度は9600bps, Data:8bit, Stop:1bit, Parity:Nonです。遅延時間は1文字毎に20ms, 改行毎に500msぐらいが必要です。
 1. Enterキーを一度押すと、エミュレーターが動きはじめます。
 1. Enterキーをもう一度押すと、スーパーモニタが起動します。モニタとしての機能を楽しんでください。
-1. モニタのBコマンドでBASIC3が起動します。サンプルプログラムのASCIIART.BASをターミナルからアップロードして実行してみてください。
+1. モニタのBコマンドでBASIC3が起動します。samplesディレクトリにある[ASCIIART.BAS](../samples/ASCIIART.BAS)をターミナルからアップロードして実行してみてください。
 
 ## 動作中の画面
 ![MCSMP20A_screenshot1](../IMG/MCSMP20A_screenshot1.jpg)
